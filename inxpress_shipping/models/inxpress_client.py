@@ -44,7 +44,7 @@ class InXpressClient:
         # JWT is returned in the Authorization header (case-insensitive)
         token = resp.headers.get("Authorization") or resp.headers.get("authorization", "")
         if not token:
-            # Some proxies strip the header — try the response body
+            # Some proxies strip the header, so try the response body
             try:
                 body = resp.json()
                 token = body.get("token") or body.get("accessToken", "")

@@ -810,7 +810,7 @@ class DeliveryCarrier(models.Model):
         if num_rates > 1:
             warning = _(
                 "Showing cheapest rate (%(carrier)s - %(service)s). "
-                "%(count)s rates available — click 'InXpress Rates' to compare.",
+                "%(count)s rates available; click 'InXpress Rates' to compare.",
                 carrier=carrier_name,
                 service=service_name,
                 count=num_rates,
