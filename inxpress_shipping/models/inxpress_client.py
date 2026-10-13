@@ -150,15 +150,15 @@ class InXpressClient:
         return self._get_binary(f"/api/v3/document/thermal-label/{shipment_id}")
 
     def get_label_url(self, shipment_id):
-        """GET /api/v3/integrations/shipments/{shipment_id}/label
+        """GET /api/v3/integrations/shipments/{shipment_id}/documents/label
 
         A fresh presigned URL for a label already bought. The one in the
         dispatch response is short-lived - an hour by default - and this
         re-presigns the stored PDF rather than re-rendering or re-dispatching
-        it. Returns CommerceLabelRetrievalResponse: labelUrl, expiresAt.
+        it. Returns CommerceDocument: type, url, expiresAt.
         """
         return self._get(
-            f"/api/v3/integrations/shipments/{shipment_id}/label"
+            f"/api/v3/integrations/shipments/{shipment_id}/documents/label"
         )
 
     def download_label_url(self, url):

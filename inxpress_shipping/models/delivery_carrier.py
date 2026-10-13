@@ -1070,7 +1070,7 @@ class DeliveryCarrier(models.Model):
                 )
 
         try:
-            fresh = (client.get_label_url(shipment_id) or {}).get("labelUrl")
+            fresh = (client.get_label_url(shipment_id) or {}).get("url")
             if fresh:
                 return client.download_label_url(fresh)
         except Exception:
