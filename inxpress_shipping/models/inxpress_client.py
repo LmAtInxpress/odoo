@@ -9,56 +9,18 @@ TIMEOUT = 60  # seconds
 
 
 class InXpressClient:
-    """HTTP client for the InXpress v3 API.
+    """HTTP client for the InXpress v3 API, authenticated with an API token (ixpx_*)."""
 
-    Supports two auth modes:
-    - API token (ixpx_*): pass api_token, leave username/password empty
-    - JWT (username/password): pass username + password, leave api_token empty
-    """
-
-    def __init__(self, base_url, api_token=None, username=None, password=None):
+    def __init__(self, base_url, api_token):
+        if not api_token:
+            raise ValueError("An InXpress API token is required")
         self.base_url = base_url.rstrip("/")
         self.session = requests.Session()
         self.session.headers.update({
             "Content-Type": "application/json",
             "Accept": "application/json",
+            "Authorization": f"Bearer {api_token}",
         })
-
-        if api_token:
-            self.session.headers["Authorization"] = f"Bearer {api_token}"
-        elif username and password:
-            self._login(username, password)
-        else:
-            raise ValueError("Provide either api_token or username+password")
-
-    def _login(self, username, password):
-        """POST /api/v3/auth/login to obtain a JWT token."""
-        url = f"{self.base_url}/api/v3/auth/login"
-        _logger.debug("InXpress login %s", url)
-        resp = self.session.post(url, json={
-            "username": username,
-            "password": password,
-        }, timeout=TIMEOUT)
-        resp.raise_for_status()
-
-        # JWT is returned in the Authorization header (case-insensitive)
-        token = resp.headers.get("Authorization") or resp.headers.get("authorization", "")
-        if not token:
-            # Some proxies strip the header, so try the response body
-            try:
-                body = resp.json()
-                token = body.get("token") or body.get("accessToken", "")
-            except Exception:
-                pass
-        if not token:
-            _logger.error("InXpress login %s returned %s but no JWT token", url, resp.status_code)
-            _logger.debug("Login response headers: %s", dict(resp.headers))
-            _logger.debug("Login response body: %s", resp.text[:500])
-            raise ValueError("Login succeeded but no JWT token found in response")
-        # Ensure Bearer prefix
-        if not token.startswith("Bearer "):
-            token = f"Bearer {token}"
-        self.session.headers["Authorization"] = token
 
     # ------------------------------------------------------------------
     # Carriers

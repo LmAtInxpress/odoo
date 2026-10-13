@@ -32,15 +32,7 @@ class DeliveryCarrier(models.Model):
     )
     inxpress_api_token = fields.Char(
         string="API Token",
-        help="InXpress API token (ixpx_...). Leave empty to use username/password.",
-    )
-    inxpress_username = fields.Char(
-        string="Username",
-        help="InXpress login username. Used when API Token is empty.",
-    )
-    inxpress_password = fields.Char(
-        string="Password",
-        help="InXpress login password. Used when API Token is empty.",
+        help="InXpress API token (ixpx_...).",
     )
     inxpress_carrier_code = fields.Char(
         string="Carrier Code",
@@ -150,18 +142,12 @@ class DeliveryCarrier(models.Model):
                 "Please configure the InXpress API URL on carrier '%s'.",
                 self.name,
             ))
-        if self.inxpress_api_token:
-            return InXpressClient(self.inxpress_base_url, api_token=self.inxpress_api_token)
-        if self.inxpress_username and self.inxpress_password:
-            return InXpressClient(
-                self.inxpress_base_url,
-                username=self.inxpress_username,
-                password=self.inxpress_password,
-            )
-        raise UserError(_(
-            "Please configure either an API Token or Username/Password on carrier '%s'.",
-            self.name,
-        ))
+        if not self.inxpress_api_token:
+            raise UserError(_(
+                "Please configure the InXpress API Token on carrier '%s'.",
+                self.name,
+            ))
+        return InXpressClient(self.inxpress_base_url, api_token=self.inxpress_api_token)
 
     def _inxpress_address_payload(self, partner, prefix):
         """Convert a res.partner into a InXpress AddressDetail dict."""

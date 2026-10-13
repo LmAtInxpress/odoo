@@ -52,8 +52,7 @@ set its provider to InXpress.
 | Field | What it does |
 | --- | --- |
 | InXpress API URL | Base URL of your InXpress server. Required. |
-| API Token | Your `ixpx_` token. Leave empty to use username and password. |
-| Username, Password | Used only when the API Token is empty. |
+| API Token | Your `ixpx_` token. Required. |
 | Carrier Code | Restricts quotes to one carrier. Empty returns every carrier. |
 | Service Code | Restricts quotes to one service. |
 | Default Package Type | The box whose dimensions every quote sends. |
@@ -71,6 +70,35 @@ must match the InXpress account currency.
 Tracking status refreshes when a user clicks Tracking on the transfer. The
 scheduled action "InXpress: Sync Tracking" refreshes it every 4 hours, but it
 ships inactive. Activate it under Settings > Technical > Scheduled Actions.
+
+## Data sent to InXpress
+
+Every call goes to the InXpress API URL on the delivery method, which is
+WebShip-X. WebShip-X passes the shipment on to the carrier the user picked.
+Nothing is sent until a rate is requested or a delivery is validated.
+
+| Call | Endpoint | Data sent | Code |
+| --- | --- | --- | --- |
+| Every call | all | API token in the `Authorization` header | `InXpressClient.__init__` |
+| Quote | `POST /api/v3/integrations/rates` | Recipient name, street (line 1), city, state code, postal code, country code. Order weight and box dimensions. Freight: handling unit, freight class, accessorials. | `_inxpress_quote_payload` |
+| Dispatch | `POST /api/v3/integrations/shipments` | Recipient company name, contact name, email, phone (or mobile), street lines 1 and 2, city, state code, postal code, country code. Order number (or picking name). Selected service and service level. Company currency. Number of boxes, weight per box, largest box dimensions. Product names on the transfer, joined, up to 200 characters. Invoice issue date if set. Freight extras as for the quote. | `inxpress_send_shipping` |
+| Dispatch, international only | same | Incoterm. One customs line per product: name, quantity done, unit value, country of origin, HS code, line weight. | `_inxpress_incoterm`, `_inxpress_customs_items` |
+| Tracking | `GET /api/v3/integrations/shipments/{id}/tracking` | Shipment ID | `InXpressClient` |
+| Label | `GET /api/v3/integrations/shipments/{id}/label`, then the presigned URL (fallback `GET /api/v3/document/label/{id}`) | Shipment ID | `InXpressClient` |
+| Cancel | `POST /api/v3/integrations/shipments/{id}/void` | Shipment ID and the reason "Cancelled from Odoo" | `InXpressClient` |
+
+Not sent: the customer's billing address, sales order prices, payment
+details, the shipper address (WebShip-X takes it from the InXpress account),
+or anything about Odoo users.
+
+Stored in Odoo from the responses: shipment ID, tracking number, booked
+price, the label PDF (attached to the transfer), tracking status, events and
+link.
+
+If you change a payload builder, update this table and the "Data sent to
+InXpress" section in `static/description/index.html`. The Odoo Apps Store
+requires the listing to disclose it. InXpress's handling of the data is
+covered by its [Global Privacy Policy](https://inxpress.com/legal/).
 
 ## How a quote gets its dimensions
 
@@ -135,7 +163,7 @@ the quote payload, including the package-type precedence described above.
 ## Conventions
 
 New helper methods take the `_inxpress_` prefix, which keeps them separate from
-Odoo's own namespace. Never log or echo the API token or the password. Errors
+Odoo's own namespace. Never log or echo the API token. Errors
 shown to the end user go through `_inxpress_opaque_error`, which hides upstream
 carrier detail on purpose. Any payload field with a unit gets converted, see
 `_inxpress_weight_value` and `_inxpress_length_value`.
