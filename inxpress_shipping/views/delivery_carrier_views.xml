@@ -16,13 +16,7 @@
                         <field name="inxpress_base_url"
                                placeholder="https://api.webship-x.com"/>
                         <field name="inxpress_api_token" password="True"
-                               placeholder="ixpx_... (leave empty for username/password)"/>
-                        <field name="inxpress_username"
-                               placeholder="Username (if no API token)"
-                               invisible="inxpress_api_token"/>
-                        <field name="inxpress_password" password="True"
-                               placeholder="Password"
-                               invisible="inxpress_api_token"/>
+                               placeholder="ixpx_..."/>
                     </group>
                     <group>
                         <field name="inxpress_shipping_mode" widget="radio"

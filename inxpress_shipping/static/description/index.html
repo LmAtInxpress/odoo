@@ -99,6 +99,52 @@
 
 <section class="oe_container oe_dark">
   <div class="oe_row oe_spaced">
+    <h3 class="oe_slogan">Data sent to InXpress</h3>
+    <div class="oe_span12">
+      <p>
+        To rate, book, label and track shipments, the module sends data from
+        your Odoo database to InXpress, which passes it to the carrier you
+        choose. Nothing is sent until someone requests a rate or validates a
+        delivery.
+      </p>
+      <ul>
+        <li>
+          <strong>Rates:</strong> the delivery address (name, street, city,
+          state, postal code, country), and the order's weight and box
+          dimensions.
+        </li>
+        <li>
+          <strong>Booking:</strong> the delivery contact's name, company, email
+          and phone, the full delivery address, the order number, the product
+          names on the delivery, the number of boxes, weights and dimensions,
+          and the invoice issue date if one is set on the order.
+        </li>
+        <li>
+          <strong>International bookings, in addition:</strong> the incoterm
+          and, per product, the name, quantity, value, weight, country of
+          origin and HS code.
+        </li>
+        <li>
+          <strong>Tracking, labels and cancellation:</strong> the InXpress
+          shipment ID only.
+        </li>
+        <li>
+          <strong>Sign-in:</strong> your InXpress API token on every request.
+        </li>
+      </ul>
+      <p>
+        Your customers' billing addresses, sales order prices and payment
+        details are not sent. Odoo stores the shipment ID, tracking number,
+        booked price, label and tracking events it receives back. How InXpress
+        handles this data is set out in the
+        <a href="https://inxpress.com/legal/">InXpress Global Privacy Policy</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
     <h3 class="oe_slogan">Setup</h3>
     <div class="oe_span12">
       <p>

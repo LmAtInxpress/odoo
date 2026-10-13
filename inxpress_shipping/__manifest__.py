@@ -11,7 +11,8 @@ from the delivery order using the boxes actually packed, and get the label and
 tracking number back in Odoo. Supports both parcel and freight (LTL) shipping,
 international customs declarations, and scheduled tracking updates.
 
-Requires an InXpress account.
+Requires an InXpress account. Recipient contact details and shipment data are
+sent to InXpress to rate and book shipments.
 """,
     "author": "InXpress",
     "website": "https://www.inxpress.com",
