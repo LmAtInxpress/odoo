@@ -84,7 +84,7 @@ Nothing is sent until a rate is requested or a delivery is validated.
 | Dispatch | `POST /api/v3/integrations/shipments` | Recipient company name, contact name, email, phone (or mobile), street lines 1 and 2, city, state code, postal code, country code. Order number (or picking name). Selected service and service level. Company currency. Number of boxes, weight per box, largest box dimensions. Product names on the transfer, joined, up to 200 characters. Invoice issue date if set. Freight extras as for the quote. | `inxpress_send_shipping` |
 | Dispatch, international only | same | Incoterm. One customs line per product: name, quantity done, unit value, country of origin, HS code, line weight. | `_inxpress_incoterm`, `_inxpress_customs_items` |
 | Tracking | `GET /api/v3/integrations/shipments/{id}/tracking` | Shipment ID | `InXpressClient` |
-| Label | `GET /api/v3/integrations/shipments/{id}/label`, then the presigned URL (fallback `GET /api/v3/document/label/{id}`) | Shipment ID | `InXpressClient` |
+| Label | `GET /api/v3/integrations/shipments/{id}/documents/label`, then the presigned URL | Shipment ID | `InXpressClient` |
 | Cancel | `POST /api/v3/integrations/shipments/{id}/void` | Shipment ID and the reason "Cancelled from Odoo" | `InXpressClient` |
 
 Not sent: the customer's billing address, sales order prices, payment

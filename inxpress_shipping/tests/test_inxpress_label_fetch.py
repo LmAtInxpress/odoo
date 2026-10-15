@@ -9,7 +9,6 @@ class _FakeClient:
     def __init__(self, fresh_response):
         self.fresh_response = fresh_response
         self.downloaded = []
-        self.document_endpoint_called = False
 
     def download_label_url(self, url):
         self.downloaded.append(url)
@@ -19,10 +18,6 @@ class _FakeClient:
 
     def get_label_url(self, shipment_id):
         return self.fresh_response
-
-    def get_label(self, shipment_id):
-        self.document_endpoint_called = True
-        return b"%PDF-document-endpoint"
 
 
 @tagged("post_install", "-at_install")
@@ -59,7 +54,6 @@ class TestInXpressLabelFetch(TransactionCase):
             "https://expired.invalid/label.pdf",
             "https://fresh.invalid/label.pdf",
         ])
-        self.assertFalse(client.document_endpoint_called)
 
     def test_the_old_label_url_field_is_not_read(self):
         client = _FakeClient({"labelUrl": "https://fresh.invalid/label.pdf"})
@@ -67,8 +61,8 @@ class TestInXpressLabelFetch(TransactionCase):
         pdf = self.carrier._inxpress_fetch_label_bytes(
             client, 4926916, "https://expired.invalid/label.pdf")
 
-        self.assertEqual(pdf, b"%PDF-document-endpoint")
-        self.assertTrue(client.document_endpoint_called)
+        self.assertIsNone(pdf)
+        self.assertEqual(client.downloaded, ["https://expired.invalid/label.pdf"])
 
     def test_client_calls_the_documents_path(self):
         client = InXpressClient("https://example.invalid/", api_token="ixpx_test")
