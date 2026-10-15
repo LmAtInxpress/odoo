@@ -1056,9 +1056,9 @@ class DeliveryCarrier(models.Model):
 
         That URL is presigned and short-lived, so a failure asks the shipment
         for a fresh one: the documented re-presign, which serves the PDF that
-        was already bought rather than rendering a new one. The document
-        endpoint stays as the last resort for shipments the newer path does
-        not answer for.
+        was already bought rather than rendering a new one. Returns None when
+        neither gives a label: the older document endpoint is refused for
+        ixpx_ tokens, so there is nothing further to fall back to.
         """
         if label_url:
             try:
@@ -1075,11 +1075,11 @@ class DeliveryCarrier(models.Model):
                 return client.download_label_url(fresh)
         except Exception:
             _logger.warning(
-                "Label re-presign failed for shipment %s, falling back to the "
-                "document endpoint", shipment_id, exc_info=True,
+                "Label re-presign failed for shipment %s", shipment_id,
+                exc_info=True,
             )
 
-        return client.get_label(shipment_id)
+        return None
 
     # ------------------------------------------------------------------
     # delivery.carrier interface: get_tracking_link

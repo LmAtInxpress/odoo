@@ -141,10 +141,6 @@ class InXpressClient:
     # Documents / Labels
     # ------------------------------------------------------------------
 
-    def get_label(self, shipment_id):
-        """GET /api/v3/document/label/{shipment_id} - returns PDF bytes."""
-        return self._get_binary(f"/api/v3/document/label/{shipment_id}")
-
     def get_thermal_label(self, shipment_id):
         """GET /api/v3/document/thermal-label/{shipment_id}"""
         return self._get_binary(f"/api/v3/document/thermal-label/{shipment_id}")
